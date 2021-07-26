@@ -159,7 +159,6 @@ func(self *FtxWebsocket) Connect(market *string, subCannel SubChannel, msgFunc f
 					break ALL
 				case "subscribed":
 					self.ErrChan <- nil
-					break ALL
 				case "unsubscribed":
 					self.ErrChan <- nil
 					break ALL
