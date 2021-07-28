@@ -122,7 +122,7 @@ func(self *FtxWebsocket) KeepPing(conn *websocket.Conn) {
 	self.cancel()
 }
 
-func(self *FtxWebsocket) Connect(market *string, subCannel SubChannel, msgFunc func(msg []byte)) {
+func(self *FtxWebsocket) Connect(market *string, subCannel SubChannel, msgFunc func(msg []byte) error) {
 	conn, _, err := websocket.DefaultDialer.Dial(WebSocketEndPoint, nil)
 	if err != nil {
 		self.ErrChan <- err
@@ -159,13 +159,16 @@ func(self *FtxWebsocket) Connect(market *string, subCannel SubChannel, msgFunc f
 					break ALL
 				case "subscribed":
 					self.ErrChan <- nil
-					//
 				case "unsubscribed":
 					self.ErrChan <- nil
 					break ALL
 				case "partial":
 				case "update":
-					msgFunc(data)
+					err = msgFunc(data)
+					if err != nil {
+						self.ErrChan <- err
+						break ALL
+					}
 				}
 			}
 		}
