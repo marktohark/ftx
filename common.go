@@ -55,7 +55,7 @@ func CheckApiError(respJson string) error {
 	if success {
 		return nil
 	}
-	return NewApiError(0, gjson.Get(respJson, "error").String())
+	return NewApiError(0, respJson)
 }
 
 func Struct2MapString(data interface{}) map[string]string {
