@@ -2,6 +2,7 @@ package Ftx
 
 import (
 	"context"
+	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
@@ -105,7 +106,7 @@ func(self *FtxWebsocket) PingJson() string {
 }
 
 func(self *FtxWebsocket) KeepPing(conn *websocket.Conn) {
-	ticker := time.NewTicker(15 * time.Second)
+	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
 	ALL:
 	for {
@@ -113,7 +114,7 @@ func(self *FtxWebsocket) KeepPing(conn *websocket.Conn) {
 		case <-self.ctx.Done():
 			break ALL
 		case <-ticker.C:
-			if err := conn.WriteMessage(websocket.PingMessage, []byte(self.PingJson())); err != nil {
+			if err := conn.WriteMessage(websocket.TextMessage, []byte(self.PingJson())); err != nil {
 				self.ErrChan <- err
 				break ALL
 			}
@@ -169,6 +170,8 @@ func(self *FtxWebsocket) Connect(market *string, subCannel SubChannel, msgFunc f
 						self.ErrChan <- err
 						break ALL
 					}
+				case "pong":
+					fmt.Println(_type, "=>", time.Now().Format("15:04:05"))
 				}
 			}
 		}
