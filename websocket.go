@@ -178,3 +178,7 @@ func(self *FtxWebsocket) Connect(market *string, subCannel SubChannel, msgFunc f
 		self.cancel()
 	}()
 }
+
+func(self *FtxWebsocket) Close() {
+	self.cancel()
+}
