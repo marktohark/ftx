@@ -5,7 +5,9 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type PlaceOrder struct {}
+type PlaceOrder struct {
+	cl *HttpClient
+}
 
 type PlaceOrderPayload struct {
 	Market     string `json:"market"`
@@ -39,13 +41,14 @@ type PlaceOrderResponse struct {
 }
 
 func NewPlaceOrder() *PlaceOrder {
-	return &PlaceOrder{}
+	return &PlaceOrder{
+		cl: NewHttpClient(),
+	}
 }
 
 func(self *PlaceOrder) Do(payload *PlaceOrderPayload) (*PlaceOrderResponse, error) {
-	cl := NewHttpClient()
 	payloadJson, _ := json.Marshal(payload)
-	resp, err := cl.Post("/api/orders", nil, string(payloadJson))
+	resp, err := self.cl.Post("/api/orders", nil, string(payloadJson))
 	if err != nil {
 		return nil, err
 	}
